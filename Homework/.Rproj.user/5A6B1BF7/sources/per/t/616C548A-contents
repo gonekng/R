@@ -1,0 +1,179 @@
+---
+title: "R_basic_statistics"
+author: "Jiwon Kang"
+date: '2022-03-15'
+output: 
+  html_document:
+    keep_md: true
+---
+
+### 1. 분석 방법
+
+#### &nbsp;&nbsp;1) 기술통계(discriptive Statistics)
+&nbsp;&nbsp;&nbsp;&nbsp;: 평균, 최솟값, 최댓값, 중앙값 등 데이터의 특징을 서술하는 것
+
+#### &nbsp;&nbsp;2) 추론통계(inferential Statistics)
+&nbsp;&nbsp;&nbsp;&nbsp;: 변수 간의 관계를 파악하여 변수 간 인과관계나 새로운 사실을 밝혀내는 것
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(1) 평균 차이 검정: 집단별 평균의 차이가 실제로 있는가를 검정하는 것
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(2) 교차분석: 범주형 변수로 구성된 집단들의 관련성을 검정하는 것
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(3) 상관관계분석: 변수 간의 상관관계(correlation)를 알아보는 것
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - 상관관계는 한 변수가 변화하면 다른 변수도 변화하는 관계를 의미
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - 상관계수(r): 변화의 강도와 방향을 나타내는 계수 (-1 <= r <= 1)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - 수치가 클수록 영향을 주는 강도가 크며, '+'는 정의 관계, '-'는 역의 관계
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(4) 회귀분석: 독립변수와 종속변수 간의 인과관계를 분석하는 것
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - 독립변수: 영향을 주는 변수 / 종속변수: 영향을 받는 변수
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - 단순회귀분석: 종속변수 1개, 독립변수 1개 (y = a + b*x)
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  - 다중회귀분석: 종속변수 1개, 독립변수 2개 이상 (y = a + b1*x1 + b2*x2 +...)
+
+<br/><br/>
+
+### 2. 통계 검정
+
+#### &nbsp;&nbsp;1) 가설(hypothesis): 어떤 현상을 설명하기 위해서 가정하는 명제
+&nbsp;&nbsp;&nbsp;&nbsp;- 귀무가설(H0): 처음부터 기각될 것으로 예상되는 가설 (영가설)
+
+&nbsp;&nbsp;&nbsp;&nbsp;- 대립가설(H1): 귀무가설이 기각될 경우 받아들여지는 가설
+
+#### &nbsp;&nbsp;2) 유의수준(significance level, p값)
+&nbsp;&nbsp;&nbsp;&nbsp;- 귀무가설이 맞는데도 대립가설을 채택할 확률 (제1종 오류의 최대 허용 범위)
+
+&nbsp;&nbsp;&nbsp;&nbsp;- 가설 검정에서 인정하는 유의수준: 5%, 1%, 0.1%
+
+&nbsp;&nbsp;&nbsp;&nbsp;- 신뢰수준(confidence level): 신뢰할 수 있는 범위 (1-유의수준)
+
+#### &nbsp;&nbsp;3) 척도(scale)
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(1) 명목척도: 측정대상의 특성이나 범주를 구분하는 척도
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 등번호, 성별, 인종, 지역 등
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 산술 연산을 할 수 없음
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(2) 서열척도: 측정대상의 등급순위를 나타내는 척도
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 계급, 사회계층, 자격등급 등
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 산술 연산을 할 수 없음
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 척도 간의 거리나 간격을 나타내지는 않음
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(3) 등간척도: 측정대상을 일정한 간격으로 구분한 척도
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 온도, 학력, 시험점수 등
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 서열 뿐만 아니라 거리와 간격도 표현 가능
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 덧셈, 뺄셈을 할 수 있음
+
+##### &nbsp;&nbsp;&nbsp;&nbsp;(4) 비율척도 : 측정대상을 비율로 나타낼 수 있는 척도
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 연령, 키, 무게 등
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- 사칙연산을 모두 할 수 있음
+
+<br/><br/>
+
+### 3. 통계 분석 사례
+
+#### &nbsp;&nbsp;1) 두 집단의 평균 차이 검정 - 독립표본 t검정(t.test())
+&nbsp;&nbsp;&nbsp;&nbsp;- 독립변수는 명목척도, 종속변수는 등간척도 또는 비율척도이어야 함
+
+> &nbsp;&nbsp;귀무가설: auto와 manual의 cty평균은 차이가 없다.
+
+```{r}
+mpg1 <- read.csv("mpg1.csv")
+str(mpg1)
+
+t.test(data=mpg1, cty~trans)
+```
+
+> &nbsp;&nbsp;p-value = 1.263e-05, 귀무가설 기각(유의수준 .05에서 유의미한 차이가 있음)
+
+&nbsp;
+
+#### &nbsp;&nbsp;2) 교차분석 - 카이제곱 검정(chisq.test())
+
+> &nbsp;&nbsp;귀무가설: trans에 따라 drv의 차이가 없다.
+
+```{r}
+mpg1 <- read.csv("mpg1.csv")
+str(mpg1)
+
+table(mpg1$trans, mpg1$drv)
+prop.table(table(mpg1$trans, mpg1$drv),1)
+
+
+chisq.test(mpg1$trans, mpg1$drv)
+```
+
+> &nbsp;&nbsp;p-value = 0.2084, 귀무가설 채택(유의수준 .05에서 유의미한 차이가 없음)
+  
+&nbsp;
+
+#### &nbsp;&nbsp;3) 상관관계분석 - cor.test()
+
+> &nbsp;&nbsp;귀무가설: cty와 hwy는 상관관계가 없다.
+
+```{r}
+mpg1 <- read.csv("mpg1.csv")
+str(mpg1)
+
+cor.test(mpg1$cty, mpg1$hwy)
+```
+
+> &nbsp;&nbsp;p-value < 2.2e-16, 귀무가설 기각(유의수준 .05에서 상관관계가 있음)
+
+> &nbsp;&nbsp;상관계수 r = 0.9559159 (매우 높은 상관관계)
+  
+&nbsp;
+
+#### &nbsp;&nbsp;4) 단순회귀분석 - lm()
+&nbsp;&nbsp;&nbsp;&nbsp;- 독립변수와 종속변수가 모두 등간척도 또는 비율척도이어야 함
+
+> &nbsp;&nbsp;귀무가설: disp는 mpg에 영향을 주지 않는다.
+
+```{r}
+RA <- lm(data=mtcars, mpg~disp)
+summary(RA)
+
+plot(data=mtcars, mpg~disp)
+abline(RA, col="red")
+```
+
+> &nbsp;&nbsp;p-value = 9.38e-10, 귀무가설 기각(유의수준 .05에서 회귀모형이 적합함)
+
+> &nbsp;&nbsp;절편(Intercept) = 29.599855 (유의수준 .05에서 유의함)
+
+> &nbsp;&nbsp;회귀계수(Estimate) = -0.041215 (유의수준 .05에서 유의함)
+
+> &nbsp;&nbsp;회귀식: mpg = 29.599855 - 0.041215 * disp
+
+> &nbsp;&nbsp;수정된 결정계수(Adjusted R-Squared) = .709
+  
+&nbsp;
+
+#### &nbsp;&nbsp;5) 다중회귀분석 - lm()
+
+```{r}
+RA <- lm(data=mtcars, mpg~disp+hp+wt)
+summary(RA)
+```
+
+
+> &nbsp;&nbsp;p-value = 8.65e-11, 귀무가설 기각(유의수준 .05에서 회귀모형이 적합함)
+
+> &nbsp;&nbsp;절편(Intercept) = 29.599855 (유의수준 .05에서 유의함)
+
+> &nbsp;&nbsp;dist의 계수 = -0.000937 (유의수준 .05에서 통계적으로 유의하지 않음)
+
+> &nbsp;&nbsp;hp의 계수 = -0.031157 (유의수준 .05에서 유의함)
+
+> &nbsp;&nbsp;wt의 계수 = -3.800891 (유의수준 .05에서 유의함)
+
+> &nbsp;&nbsp;회귀식: mpg = 29.599855 - 0.000937 * disp - 0.031157 * hp - 3.800891 * wt
+
+> &nbsp;&nbsp;수정된 결정계수(Adjusted R-Squared) = .8083
